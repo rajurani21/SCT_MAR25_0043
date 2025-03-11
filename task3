@@ -1,1 +1,123 @@
+3rd task:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: #1a1a2e;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: #ff4c29;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #16213e;
+            border: 2px solid #ff4c29;
+            font-size: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .cell:hover {
+            background-color: #ff4c29;
+            color: white;
+        }
+        .winner {
+            color: #00f2ff;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        .reset-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #ff4c29;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .reset-btn:hover {
+            background-color: #00f2ff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div class="board" id="board"></div>
+    <div class="winner" id="winner"></div>
+    <button class="reset-btn" onclick="resetGame()">Reset Game</button>
 
+    <script>
+        const board = document.getElementById("board");
+        const winnerText = document.getElementById("winner");
+        let currentPlayer = "X";
+        let gameBoard = ["", "", "", "", "", "", "", "", ""];
+        
+        function createBoard() {
+            board.innerHTML = "";
+            gameBoard.forEach((cell, index) => {
+                let cellDiv = document.createElement("div");
+                cellDiv.classList.add("cell");
+                cellDiv.dataset.index = index;
+                cellDiv.innerText = cell;
+                cellDiv.addEventListener("click", handleMove);
+                board.appendChild(cellDiv);
+            });
+        }
+        
+        function handleMove(event) {
+            let index = event.target.dataset.index;
+            if (gameBoard[index] === "" && !winnerText.innerText) {
+                gameBoard[index] = currentPlayer;
+                currentPlayer = currentPlayer === "X" ? "O" : "X";
+                checkWinner();
+                createBoard();
+            }
+        }
+        
+        function checkWinner() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+                [0, 4, 8], [2, 4, 6]
+            ];
+            winPatterns.forEach(pattern => {
+                let [a, b, c] = pattern;
+                if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                    winnerText.innerText = Winner: ${gameBoard[a]};
+                }
+            });
+            if (!gameBoard.includes("") && !winnerText.innerText) {
+                winnerText.innerText = "It's a Draw!";
+            }
+        }
+        
+        function resetGame() {
+            gameBoard = ["", "", "", "", "", "", "", "", ""];
+            currentPlayer = "X";
+            winnerText.innerText = "";
+            createBoard();
+        }
+        
+        createBoard();
+    </script>
+</body>
+</html>
