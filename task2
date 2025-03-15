@@ -1,4 +1,3 @@
-2nd task:
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,117 +6,110 @@
     <title>Stopwatch</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
             font-family: Arial, sans-serif;
+            background-color: #1a1a2e;
+            color: white;
+            text-align: center;
+            padding-top: 50px;
+        }
+        h1 {
+            color: #ff4c29;
         }
         .stopwatch {
-            text-align: center;
-            background: white;
-            padding: 20px;
+            font-size: 2rem;
+            background: #16213e;
+            display: inline-block;
+            padding: 20px 40px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0px 0px 10px #00f2ff;
+            margin-bottom: 20px;
         }
-        .time {
-            font-size: 2em;
-            margin-bottom: 10px;
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
         }
-        .buttons button {
-            margin: 5px;
-            padding: 10px 15px;
-            font-size: 1em;
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
             border: none;
-            cursor: pointer;
             border-radius: 5px;
+            cursor: pointer;
             transition: 0.3s;
         }
-        .start { background: #28a745; color: white; }
-        .pause { background: #ffc107; color: white; }
-        .reset { background: #dc3545; color: white; }
-        .lap { background: #007bff; color: white; }
-        .buttons button:hover { opacity: 0.8; }
-        .laps {
-            margin-top: 10px;
-            max-height: 150px;
-            overflow-y: auto;
-            text-align: left;
+        .start-btn {
+            background-color: #00f2ff;
+            color: black;
         }
-        .laps div {
-            background: #f1f1f1;
-            padding: 5px;
-            margin: 2px 0;
-            border-radius: 5px;
+        .stop-btn {
+            background-color: #ffcc29;
+        }
+        .reset-btn {
+            background-color: #ff4c29;
+            color: white;
+        }
+        button:hover {
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
-    <div class="stopwatch">
-        <div class="time">00:00:00</div>
-        <div class="buttons">
-            <button class="start" onclick="startStopwatch()">Start</button>
-            <button class="pause" onclick="pauseStopwatch()">Pause</button>
-            <button class="reset" onclick="resetStopwatch()">Reset</button>
-            <button class="lap" onclick="recordLap()">Lap</button>
-        </div>
-        <div class="laps"></div>
+
+    <h1>Stopwatch</h1>
+    <div class="stopwatch">00:00:00:00</div>
+    <div class="buttons">
+        <button class="start-btn" onclick="startStopwatch()">Start</button>
+        <button class="stop-btn" onclick="stopStopwatch()">Stop</button>
+        <button class="reset-btn" onclick="resetStopwatch()">Reset</button>
     </div>
 
     <script>
         let timer;
-        let startTime;
-        let elapsedTime = 0;
-        let isRunning = false;
-        const timeDisplay = document.querySelector('.time');
-        const lapsContainer = document.querySelector('.laps');
+        let running = false;
+        let milliseconds = 0, seconds = 0, minutes = 0, hours = 0;
+
+        function updateDisplay() {
+            document.querySelector('.stopwatch').innerText = 
+                `${String(hours).padStart(2, '0')}:
+                 ${String(minutes).padStart(2, '0')}:
+                 ${String(seconds).padStart(2, '0')}:
+                 ${String(milliseconds).padStart(2, '0')}`;
+        }
 
         function startStopwatch() {
-            if (!isRunning) {
-                startTime = Date.now() - elapsedTime;
-                timer = setInterval(updateTime, 10);
-                isRunning = true;
+            if (!running) {
+                running = true;
+                timer = setInterval(() => {
+                    milliseconds++;
+                    if (milliseconds >= 100) {
+                        milliseconds = 0;
+                        seconds++;
+                    }
+                    if (seconds >= 60) {
+                        seconds = 0;
+                        minutes++;
+                    }
+                    if (minutes >= 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+                    updateDisplay();
+                }, 10);
             }
         }
 
-        function pauseStopwatch() {
-            if (isRunning) {
-                clearInterval(timer);
-                elapsedTime = Date.now() - startTime;
-                isRunning = false;
-            }
+        function stopStopwatch() {
+            running = false;
+            clearInterval(timer);
         }
 
         function resetStopwatch() {
+            running = false;
             clearInterval(timer);
-            isRunning = false;
-            elapsedTime = 0;
-            timeDisplay.textContent = "00:00:00";
-            lapsContainer.innerHTML = "";
-        }
-
-        function updateTime() {
-            let currentTime = Date.now() - startTime;
-            elapsedTime = currentTime;
-            let totalSeconds = Math.floor(currentTime / 1000);
-            let minutes = Math.floor(totalSeconds / 60);
-            let seconds = totalSeconds % 60;
-            let milliseconds = Math.floor((currentTime % 1000) / 10);
-            timeDisplay.textContent = 
-                ${String(minutes).padStart(2, '0')}: +
-                ${String(seconds).padStart(2, '0')}: +
-                ${String(milliseconds).padStart(2, '0')};
-        }
-
-        function recordLap() {
-            if (isRunning) {
-                let lapTime = timeDisplay.textContent;
-                let lapEntry = document.createElement('div');
-                lapEntry.textContent = Lap ${lapsContainer.children.length + 1}: ${lapTime};
-                lapsContainer.prepend(lapEntry);
-            }
+            milliseconds = seconds = minutes = hours = 0;
+            updateDisplay();
         }
     </script>
+
 </body>
 </html>
